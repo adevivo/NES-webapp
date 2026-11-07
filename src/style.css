@@ -1,0 +1,183 @@
+:root {
+  --bg: #16161d;
+  --panel: #20202a;
+  --panel-2: #2b2b36;
+  --text: #ecebe6;
+  --muted: #9a99a6;
+  --accent: #d6453d;
+  --accent-ink: #fff;
+  --radius: 10px;
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; }
+code { background: var(--panel-2); padding: 0.1em 0.35em; border-radius: 4px; }
+.muted { color: var(--muted); }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+  background: var(--panel);
+  border-bottom: 1px solid #000;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.topbar-compact { flex-wrap: nowrap; }
+.topbar-actions { display: flex; gap: 8px; flex: 1 1 280px; justify-content: flex-end; }
+.brand { margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; letter-spacing: 0.02em; }
+.brand-mark {
+  width: 22px; height: 22px; border-radius: 5px;
+  background: url("/icon.svg") center / cover;
+}
+.game-title { margin: 0; font-size: 1rem; flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+input[type="search"] {
+  flex: 1 1 160px;
+  max-width: 320px;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--panel-2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-2);
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:focus-visible, .card-play:focus-visible, .card-remove:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- library ---------- */
+main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 16px; }
+section + section { margin-top: 32px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-size: 1.05rem; margin: 0 0 12px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--panel-2);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 96px;
+}
+.card:hover { border-color: var(--accent); }
+.card-play { text-decoration: none; font-weight: 600; }
+/* whole card is the play target */
+.card-play::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
+.card-title { display: block; padding-right: 64px; }
+.card-meta { font-size: 0.82rem; }
+.card-desc { margin: 0; font-size: 0.85rem; }
+.card-link { position: relative; z-index: 1; font-size: 0.8rem; align-self: flex-start; }
+.card-remove {
+  position: absolute; top: 10px; right: 10px; z-index: 1;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--panel-2); border-radius: 6px;
+  font: inherit; font-size: 0.75rem; padding: 3px 8px; cursor: pointer;
+}
+.card-remove:hover { color: var(--text); border-color: var(--accent); }
+
+.dropzone {
+  border: 2px dashed var(--panel-2);
+  border-radius: var(--radius);
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.drop-overlay {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; place-items: center;
+  background: rgb(22 22 29 / 0.85);
+  border: 4px dashed var(--accent);
+  font-size: 1.4rem; font-weight: 600;
+  pointer-events: none;
+}
+.drop-overlay[hidden], [hidden] { display: none !important; }
+
+.toast {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: var(--panel-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+
+.footer { padding: 16px; text-align: center; font-size: 0.8rem; }
+
+/* ---------- player ---------- */
+body.play { height: 100dvh; overflow: hidden; }
+.help {
+  background: var(--panel);
+  border-bottom: 1px solid #000;
+  padding: 4px 16px;
+  font-size: 0.9rem;
+}
+.stage {
+  flex: 1;
+  max-width: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  background: #000;
+  container-type: size;
+}
+#game-wrap {
+  /* Largest 4:3 box that fits the stage (whatever the header/help panel leaves).
+     EmulatorJS letterboxes the 256x240 picture inside it. */
+  width: min(100cqw, 100cqh * 4 / 3);
+  height: min(100cqh, 100cqw * 3 / 4);
+}
+#game { width: 100%; height: 100%; }
+.error {
+  margin: 24px 16px;
+  padding: 16px;
+  background: var(--panel);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+}
+@media (max-width: 600px) {
+  /* portrait phones: let the emulator (and its touch pad) use the full stage */
+  #game-wrap { width: 100cqw; height: 100cqh; }
+}

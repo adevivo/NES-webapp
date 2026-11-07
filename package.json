@@ -1,0 +1,26 @@
+{
+  "name": "nes-webapp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/copy-emulator.mjs",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@emulatorjs/core-fceumm": "4.2.3",
+    "@emulatorjs/emulatorjs": "4.2.3",
+    "idb": "8.0.4"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "vite": "8.3.6",
+    "vite-plugin-pwa": "2.0.0"
+  },
+  "overrides": {
+    "@emulatorjs/cores": "file:./stubs/emulatorjs-cores-stub"
+  }
+}

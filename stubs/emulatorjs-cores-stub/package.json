@@ -1,0 +1,6 @@
+{
+  "name": "@emulatorjs/cores",
+  "version": "0.0.0-stub",
+  "description": "Empty stand-in. @emulatorjs/emulatorjs lists @emulatorjs/cores (every core, ~48 packages) as an optional dependency. We only need NES, so we depend on @emulatorjs/core-fceumm directly and override this to nothing.",
+  "private": true
+}

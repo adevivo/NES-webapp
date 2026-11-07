@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#16161d" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <title>8-Bit Shelf</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1 class="brand"><span class="brand-mark" aria-hidden="true"></span>8-Bit Shelf</h1>
+      <div class="topbar-actions">
+        <input id="search" type="search" placeholder="Search games" aria-label="Search games" />
+        <label class="btn btn-primary">
+          Add ROMs
+          <input id="file-input" type="file" multiple hidden />
+        </label>
+      </div>
+    </header>
+
+    <main>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+      <section aria-labelledby="mine-h">
+        <div class="section-head">
+          <h2 id="mine-h">Your games</h2>
+          <span id="storage" class="muted"></span>
+        </div>
+        <div id="mine" class="grid"></div>
+        <div id="mine-empty" class="dropzone" hidden>
+          <p><strong>Drop .nes / .zip files anywhere on this page</strong>, or use <em>Add ROMs</em>.</p>
+          <p class="muted">ROMs stay in this browser (IndexedDB). Nothing is uploaded.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="hb-h">
+        <div class="section-head">
+          <h2 id="hb-h">Homebrew</h2>
+        </div>
+        <div id="homebrew" class="grid"></div>
+        <p id="homebrew-empty" class="muted" hidden>
+          No homebrew bundled yet. Add freely-redistributable ROMs to <code>public/homebrew/</code> and list them in
+          <code>manifest.json</code>.
+        </p>
+      </section>
+    </main>
+
+    <div id="drop-overlay" class="drop-overlay" hidden><p>Drop ROMs to add them</p></div>
+
+    <footer class="footer muted">
+      <span id="offline-status"></span>
+      Emulation by <a href="https://github.com/EmulatorJS/EmulatorJS" target="_blank" rel="noopener">EmulatorJS</a> 4.2.3
+      (GPL-3.0) with the FCEUmm core.
+    </footer>
+
+    <script type="module" src="/src/library.ts"></script>
+  </body>
+</html>

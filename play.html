@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- no user zoom: pinch gestures fight the on-screen gamepad -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#16161d" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <title>Playing — 8-Bit Shelf</title>
+  </head>
+  <body class="play">
+    <header class="topbar topbar-compact">
+      <a class="btn" href="./">← Library</a>
+      <h1 id="game-title" class="game-title">Loading…</h1>
+      <button id="help-btn" class="btn" type="button" aria-expanded="false" aria-controls="help">Controls</button>
+    </header>
+
+    <aside id="help" class="help" hidden>
+      <p><strong>Keyboard (defaults):</strong> Arrows = D-pad · Z = A · X = B · V = Select · Enter = Start</p>
+      <p>
+        Gamepads are detected automatically. Rebind keys/pads, manage save states, cheats and shaders from the
+        emulator toolbar (hover or tap the game). On touch devices an on-screen pad appears.
+      </p>
+      <p class="muted">Save states and in-game saves are stored per game in this browser.</p>
+    </aside>
+
+    <main class="stage">
+      <div id="error" class="error" role="alert" hidden></div>
+      <div id="game-wrap"><div id="game"></div></div>
+    </main>
+
+    <script type="module" src="/src/play.ts"></script>
+  </body>
+</html>
