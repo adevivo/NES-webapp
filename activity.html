@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#16161d" />
+    <title>8-Bit Shelf — Discord diagnostics</title>
+  </head>
+  <body class="diag">
+    <header class="topbar">
+      <h1 class="brand"><span class="brand-mark" aria-hidden="true"></span>Discord feasibility check</h1>
+      <span id="who" class="muted"></span>
+    </header>
+    <main>
+      <p class="muted">
+        Runs automatically. Results are sent to the server log. The two emulator tests below are interactive: press
+        any key (player 1) or <kbd>P</kbd> (player 2) — the screen should turn red / green.
+      </p>
+
+      <section>
+        <h2>Checks</h2>
+        <table class="results"><tbody id="results"></tbody></table>
+      </section>
+
+      <section>
+        <h2>JSNES (pure JavaScript, frame-steppable)</h2>
+        <canvas id="jsnes" width="256" height="240" class="screen"></canvas>
+      </section>
+
+      <section>
+        <h2>EmulatorJS (WebAssembly core)</h2>
+        <button id="ejs-run" class="btn btn-primary" type="button">Run EmulatorJS test</button>
+        <div id="ejs-slot" class="ejs-slot"></div>
+      </section>
+
+      <section>
+        <h2>File picker</h2>
+        <label class="btn">Pick any file <input id="file" type="file" hidden /></label>
+      </section>
+
+      <p><button id="send" class="btn" type="button">Re-send report</button> <span id="sent" class="muted"></span></p>
+    </main>
+    <script type="module" src="/src/activity.ts"></script>
+  </body>
+</html>

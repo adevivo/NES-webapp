@@ -11,9 +11,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@discord/embedded-app-sdk": "2.5.0",
     "@emulatorjs/core-fceumm": "4.2.3",
     "@emulatorjs/emulatorjs": "4.2.3",
-    "idb": "8.0.4"
+    "idb": "8.0.4",
+    "jsnes": "2.1.0",
+    "ws": "8.22.1"
   },
   "devDependencies": {
     "typescript": "7.0.2",

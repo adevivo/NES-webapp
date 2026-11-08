@@ -1,0 +1,10 @@
+.git
+node_modules
+dist
+dev-dist
+public/emulatorjs
+.env
+.env.*
+!.env.example
+**/.DS_Store
+*.md

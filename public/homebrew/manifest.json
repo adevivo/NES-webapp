@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "hb-test-pattern",
+    "title": "Test Pattern",
+    "author": "8-Bit Shelf project",
+    "file": "test-pattern.nes",
+    "license": "CC0-1.0",
+    "description": "Blue when idle, red while player 1 holds a button, green for player 2."
+  }
+]

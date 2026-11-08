@@ -1,0 +1,52 @@
+# Local / spike:   docker compose --profile quick up -d --build
+#                  docker compose logs tunnel-quick | grep trycloudflare.com   -> your public URL
+# Production:      docker compose --profile named up -d --build   (needs CLOUDFLARE_TUNNEL_TOKEN)
+#
+# No host ports are published: cloudflared makes an outbound connection to Cloudflare and
+# forwards to the app over the private compose network.
+services:
+  app:
+    build: .
+    image: nes-webapp:latest
+    container_name: nes-webapp
+    env_file: .env
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 256m
+    pids_limit: 100
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Throwaway https://<random>.trycloudflare.com URL; changes on every restart. No account needed.
+  tunnel-quick:
+    profiles: ["quick"]
+    image: cloudflare/cloudflared:2026.10.7
+    command: tunnel --no-autoupdate --url http://app:3000
+    depends_on: [app]
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+  # Stable hostname (e.g. nes.neovetta.com) configured in the Cloudflare dashboard.
+  tunnel-named:
+    profiles: ["named"]
+    image: cloudflare/cloudflared:2026.10.7
+    command: tunnel --no-autoupdate run
+    environment:
+      # (cloudflared exits with an error if this is empty)
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on: [app]
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

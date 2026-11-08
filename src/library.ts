@@ -3,6 +3,11 @@ import { registerSW } from "virtual:pwa-register";
 import { deleteGame, listGames, listPlays, type PlayRecord, type UserGame } from "./db";
 import { ACCEPT_ATTR, formatBytes, importFiles, loadHomebrewCatalog, type HomebrewGame } from "./roms";
 
+// Spike: inside a Discord Activity (Discord adds frame_id to the launch URL) go to the
+// feasibility page. The library UI isn't adapted for Discord yet.
+const inDiscord = new URLSearchParams(location.search).has("frame_id");
+if (inDiscord) location.replace(`activity.html${location.search}`);
+
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 const els = {
@@ -176,13 +181,15 @@ let offlineReady = false;
 function renderNetStatus() {
   els.offline.textContent = !navigator.onLine ? "Offline · " : offlineReady ? "Available offline · " : "";
 }
-registerSW({
-  immediate: true,
-  onOfflineReady() {
-    offlineReady = true;
-    renderNetStatus();
-  },
-});
+if (!inDiscord) {
+  registerSW({
+    immediate: true,
+    onOfflineReady() {
+      offlineReady = true;
+      renderNetStatus();
+    },
+  });
+}
 navigator.serviceWorker?.ready.then(() => {
   offlineReady = true;
   renderNetStatus();

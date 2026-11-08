@@ -40,6 +40,31 @@ own IndexedDB and localStorage, and keyed by `EJS_gameName` (our game ID).
   they would require COOP/COEP headers. Any static host works.
 - **Netplay is hidden.** It needs a signalling server, which we don't run.
 
+## Docker + Discord Activity (spike branch)
+
+The app also runs as a Discord Activity, served by a small Node server (`server/server.mjs`)
+in Docker and published through a **Cloudflare named tunnel** (`nes.neovetta.com`). No host
+ports are opened.
+
+```sh
+cp .env.example .env    # then fill in DISCORD_CLIENT_SECRET and CLOUDFLARE_TUNNEL_TOKEN
+docker compose --profile named up -d --build
+docker compose logs app | grep diagnostics   # results reported by the in-Discord check page
+```
+
+- **Run the tunnel on exactly one machine at a time.** Two connectors using the same token
+  silently split traffic between both machines.
+- The Discord URL mapping (`/` → `nes.neovetta.com`) and the Cloudflare route
+  (`nes.neovetta.com` → `http://app:3000`) don't mention a host, so moving machines needs no
+  config changes.
+- Inside Discord, `/` redirects to `activity.html` (the feasibility checks) while the spike runs.
+- `scripts/make-test-rom.py` generates `public/homebrew/test-pattern.nes`, our own CC0 test cart:
+  blue = idle, red = player 1 holding a button, green = player 2.
+
+Server endpoints: `/healthz`, `GET /api/config` (client ID), `POST /api/token` (OAuth code →
+access token; the secret never reaches the browser), `POST /api/report` (spike diagnostics),
+and a WebSocket at `/ws` (spike: echo, for round-trip measurement).
+
 ## Upgrading EmulatorJS
 
 Change both `@emulatorjs/*` versions in `package.json` together and run `npm install`. Then

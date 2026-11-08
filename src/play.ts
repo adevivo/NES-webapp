@@ -21,9 +21,23 @@ helpBtn.addEventListener("click", () => {
   helpBtn.setAttribute("aria-expanded", String(!helpEl.hidden));
 });
 
-registerSW({ immediate: true });
+// diag=1: embedded by the Discord feasibility page; report back to it instead of caching.
+const diag = new URLSearchParams(location.search).has("diag") && window.parent !== window;
+const report = (kind: string, detail: string) => diag && window.parent.postMessage({ diag: true, kind, detail }, location.origin);
+if (diag) {
+  window.addEventListener("error", (e) => report("error", e.message));
+  window.addEventListener("unhandledrejection", (e) => {
+    // EmulatorJS asks for a screen wake lock; Discord's iframe permissions policy denies it. Harmless.
+    if (String(e.reason).includes("WakeLock")) return;
+    report("error", String(e.reason));
+  });
+  document.addEventListener("securitypolicyviolation", (e) => report("csp", `${e.effectiveDirective} ${e.blockedURI}`));
+} else {
+  registerSW({ immediate: true });
+}
 
 function fail(msg: string) {
+  report("error", msg);
   titleEl.textContent = "Can’t start game";
   errorEl.innerHTML = "";
   errorEl.append(msg, " ", Object.assign(document.createElement("a"), { href: "./", textContent: "Back to library" }));
@@ -71,6 +85,7 @@ async function start() {
     },
     EJS_onGameStart: () => {
       recordPlay(id).catch(() => {});
+      report("started", "game started");
     },
   } satisfies Record<`EJS_${string}`, unknown>);
 

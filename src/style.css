@@ -181,3 +181,13 @@ body.play { height: 100dvh; overflow: hidden; }
   /* portrait phones: let the emulator (and its touch pad) use the full stage */
   #game-wrap { width: 100cqw; height: 100cqh; }
 }
+
+/* ---------- Discord diagnostics (spike) ---------- */
+.results { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.results td, .results th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--panel-2); vertical-align: top; }
+.results th { font-weight: 600; white-space: nowrap; }
+.results td:last-child { overflow-wrap: anywhere; color: var(--muted); }
+.screen { width: min(100%, 512px); image-rendering: pixelated; background: #000; display: block; }
+.ejs-slot { margin-top: 12px; }
+.ejs-frame { width: min(100%, 640px); aspect-ratio: 4 / 3; border: 0; background: #000; display: block; }
+kbd { background: var(--panel-2); border-radius: 4px; padding: 0 0.35em; }
