@@ -38,6 +38,12 @@
         <label class="btn">Pick any file <input id="file" type="file" hidden /></label>
       </section>
 
+      <section>
+        <h2>Latency</h2>
+        <p class="muted">For a clean number, run this <strong>before</strong> starting the EmulatorJS test (or relaunch the Activity first). Takes ~8 seconds.</p>
+        <button id="rtt" class="btn btn-primary" type="button">Re-run latency test</button>
+      </section>
+
       <p><button id="send" class="btn" type="button">Re-send report</button> <span id="sent" class="muted"></span></p>
     </main>
     <script type="module" src="/src/activity.ts"></script>

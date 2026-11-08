@@ -193,32 +193,63 @@ async function discord() {
 
 // ---------- WebSocket RTT ----------
 
-async function wsRtt() {
+let jsnesPaused = false; // the latency test pauses the JSNES loop so it doesn't skew timings
+let latencyRun = 0;
+
+async function wsRtt(paths = ["/ws", "/.proxy/ws"], count = 40) {
   const proto = location.protocol === "https:" ? "wss:" : "ws:";
-  for (const path of ["/ws", "/.proxy/ws"]) {
-    const name = `WebSocket RTT ${path}`;
-    set(name, null);
-    try {
-      const ws = new WebSocket(`${proto}//${location.host}${path}`);
-      await withTimeout(new Promise((res, rej) => ((ws.onopen = res), (ws.onerror = () => rej(new Error("connect failed"))))), 8000, "connect");
-      const samples: number[] = [];
-      for (let i = 0; i < 40; i++) {
-        const t0 = performance.now();
-        ws.send(String(i));
-        await withTimeout(new Promise((r) => (ws.onmessage = r)), 3000, "pong");
-        samples.push(performance.now() - t0);
-        await new Promise((r) => setTimeout(r, 50));
+  const ejsLoaded = document.querySelector(".ejs-frame") !== null;
+  const run = ++latencyRun;
+  jsnesPaused = true;
+  try {
+    for (const path of paths) {
+      const name = run === 1 ? `WebSocket RTT ${path}` : `WebSocket RTT ${path} (rerun ${run})`;
+      set(name, null, "measuring…");
+      try {
+        const ws = new WebSocket(`${proto}//${location.host}${path}`);
+        await withTimeout(new Promise((res, rej) => ((ws.onopen = res), (ws.onerror = () => rej(new Error("connect failed"))))), 8000, "connect");
+        // Sequence-numbered pings so a late pong can't be mistaken for the current one.
+        const pending = new Map<string, number>();
+        const samples: number[] = [];
+        ws.onmessage = (e) => {
+          const t0 = pending.get(String(e.data));
+          if (t0 !== undefined) {
+            samples.push(performance.now() - t0);
+            pending.delete(String(e.data));
+          }
+        };
+        for (let i = 0; i < count; i++) {
+          pending.set(`${run}:${i}`, performance.now());
+          ws.send(`${run}:${i}`);
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        await new Promise((r) => setTimeout(r, 2000)); // let stragglers arrive
+        ws.close();
+        const lost = pending.size;
+        if (!samples.length) throw new Error(`no replies (${lost} lost)`);
+        samples.sort((a, b) => a - b);
+        const q = (p: number) => samples[Math.min(samples.length - 1, Math.floor(p * samples.length))].toFixed(0);
+        const median = samples[samples.length >> 1];
+        set(
+          name,
+          lost === 0,
+          `median ${q(0.5)}ms · p90 ${q(0.9)}ms · max ${q(1)}ms · lost ${lost}/${count} · EmulatorJS ${ejsLoaded ? "LOADED (skews result)" : "not loaded"} → lockstep delay ≈ ${Math.ceil(median / 2 / 16.7) + 1} frames`,
+        );
+      } catch (e) {
+        set(name, false, String(e));
       }
-      ws.close();
-      samples.sort((a, b) => a - b);
-      const q = (p: number) => samples[Math.min(samples.length - 1, Math.floor(p * samples.length))].toFixed(0);
-      const median = samples[samples.length >> 1];
-      set(name, true, `median ${q(0.5)}ms · p90 ${q(0.9)}ms · max ${q(1)}ms → lockstep delay ≈ ${Math.ceil(median / 2 / 16.7) + 1} frames`);
-    } catch (e) {
-      set(name, false, String(e));
     }
+  } finally {
+    jsnesPaused = false;
   }
 }
+document.getElementById("rtt")!.addEventListener("click", async (e) => {
+  const btn = e.currentTarget as HTMLButtonElement;
+  btn.disabled = true;
+  await wsRtt(["/ws"], 60);
+  btn.disabled = false;
+  sendReport();
+});
 
 // ---------- JSNES ----------
 
@@ -264,6 +295,7 @@ async function jsnes() {
     canvas.addEventListener("pointerdown", () => nes.buttonDown(1, Controller.BUTTON_A));
     canvas.addEventListener("pointerup", () => nes.buttonUp(1, Controller.BUTTON_A));
     const loop = () => {
+      if (jsnesPaused) return void requestAnimationFrame(loop);
       nes.frame();
       for (let i = 0; i < view.length; i++) view[i] = 0xff000000 | last[i];
       ctx.putImageData(img, 0, 0);
