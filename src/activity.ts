@@ -7,11 +7,13 @@
 import "./style.css";
 import { DiscordSDK } from "@discord/embedded-app-sdk";
 import { Controller, NES } from "jsnes";
+import { getJSON, postJSON } from "./report";
 
 type Result = { ok: boolean | null; detail: string };
 const results: Record<string, Result> = {};
 const cspViolations: { directive: string; blocked: string; policy?: string }[] = [];
 const rows = document.getElementById("results")!;
+(document.getElementById("play-link") as HTMLAnchorElement).href = `nes.html${location.search}`;
 const inDiscord = new URLSearchParams(location.search).has("frame_id");
 
 function set(name: string, ok: boolean | null, detail = "") {
@@ -37,31 +39,6 @@ document.addEventListener("securitypolicyviolation", (e) => {
 });
 
 // ---------- reporting ----------
-
-async function postJSON(path: string, body: unknown) {
-  // Try the plain path first; fall back to Discord's /.proxy prefix.
-  for (const p of [path, `/.proxy${path}`]) {
-    try {
-      const r = await fetch(p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      if (r.ok) return { path: p, res: r };
-    } catch {
-      /* try next */
-    }
-  }
-  throw new Error(`POST ${path} failed (both plain and /.proxy)`);
-}
-
-async function getJSON(path: string) {
-  for (const p of [path, `/.proxy${path}`]) {
-    try {
-      const r = await fetch(p);
-      if (r.ok) return { path: p, data: await r.json() };
-    } catch {
-      /* try next */
-    }
-  }
-  throw new Error(`GET ${path} failed`);
-}
 
 async function sendReport() {
   const report = {

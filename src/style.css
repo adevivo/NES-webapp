@@ -191,3 +191,23 @@ body.play { height: 100dvh; overflow: hidden; }
 .ejs-slot { margin-top: 12px; }
 .ejs-frame { width: min(100%, 640px); aspect-ratio: 4 / 3; border: 0; background: #000; display: block; }
 kbd { background: var(--panel-2); border-radius: 4px; padding: 0 0.35em; }
+
+/* ---------- JSNES player page ---------- */
+body.nesplay { height: 100dvh; overflow: hidden; }
+body.nesplay .pick { overflow-y: auto; }
+.toolbar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.toolbar .btn { padding: 6px 10px; font-size: 0.85rem; }
+.pick-grid { margin-top: 16px; }
+.card-play-btn { background: none; border: 0; color: inherit; font: inherit; font-weight: 600; text-align: left; padding: 0; cursor: pointer; }
+.nes-screen {
+  /* largest 256:240 box that fits the stage */
+  width: min(100cqw, 100cqh * 256 / 240);
+  height: min(100cqh, 100cqw * 240 / 256);
+  image-rendering: pixelated;
+  background: #000;
+  outline: none;
+}
+.toast-float { position: fixed; left: 50%; top: 64px; transform: translateX(-50%); z-index: 30; max-width: min(90vw, 560px); box-shadow: 0 4px 16px rgb(0 0 0 / 0.4); }
+@media (max-width: 600px) {
+  .toolbar .btn { padding: 4px 8px; font-size: 0.75rem; }
+}

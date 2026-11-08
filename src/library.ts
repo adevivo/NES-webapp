@@ -3,10 +3,10 @@ import { registerSW } from "virtual:pwa-register";
 import { deleteGame, listGames, listPlays, type PlayRecord, type UserGame } from "./db";
 import { ACCEPT_ATTR, formatBytes, importFiles, loadHomebrewCatalog, type HomebrewGame } from "./roms";
 
-// Spike: inside a Discord Activity (Discord adds frame_id to the launch URL) go to the
-// feasibility page. The library UI isn't adapted for Discord yet.
+// Inside a Discord Activity (Discord adds frame_id to the launch URL) go to the JSNES player,
+// which is the part built for Discord. Its "Checks" link leads to the diagnostics page.
 const inDiscord = new URLSearchParams(location.search).has("frame_id");
-if (inDiscord) location.replace(`activity.html${location.search}`);
+if (inDiscord) location.replace(`nes.html${location.search}`);
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 

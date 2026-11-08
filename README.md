@@ -57,7 +57,10 @@ docker compose logs app | grep diagnostics   # results reported by the in-Discor
 - The Discord URL mapping (`/` → `nes.neovetta.com`) and the Cloudflare route
   (`nes.neovetta.com` → `http://app:3000`) don't mention a host, so moving machines needs no
   config changes.
-- Inside Discord, `/` redirects to `activity.html` (the feasibility checks) while the spike runs.
+- Inside Discord, `/` redirects to `nes.html`, the JSNES player (`src/nes/`): pick a `.nes`
+  file (kept in IndexedDB on that device, never uploaded), keyboard/gamepad, sound, battery
+  saves, quick save/load. Its "Checks" link opens `activity.html` (the feasibility checks).
+  After 20 s of play it reports frame cost, audio underruns and save-state cost to the log.
 - `scripts/make-test-rom.py` generates `public/homebrew/test-pattern.nes`, our own CC0 test cart:
   blue = idle, red = player 1 holding a button, green = player 2.
 

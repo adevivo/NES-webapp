@@ -19,16 +19,26 @@ export interface PlayRecord {
 interface LibrarySchema extends DBSchema {
   games: { key: string; value: UserGame; indexes: { addedAt: number } };
   plays: { key: string; value: PlayRecord };
+  /** JSNES battery RAM (8 KB at $6000), keyed by game id. */
+  sram: { key: string; value: Uint8Array };
+  /** JSNES quick-save state (JSON string), keyed by game id. */
+  states: { key: string; value: { json: string; savedAt: number } };
 }
 
 let dbPromise: Promise<IDBPDatabase<LibrarySchema>> | undefined;
 
 function db() {
-  dbPromise ??= openDB<LibrarySchema>("nes-library", 1, {
-    upgrade(d) {
-      const games = d.createObjectStore("games", { keyPath: "id" });
-      games.createIndex("addedAt", "addedAt");
-      d.createObjectStore("plays", { keyPath: "id" });
+  dbPromise ??= openDB<LibrarySchema>("nes-library", 2, {
+    upgrade(d, oldVersion) {
+      if (oldVersion < 1) {
+        const games = d.createObjectStore("games", { keyPath: "id" });
+        games.createIndex("addedAt", "addedAt");
+        d.createObjectStore("plays", { keyPath: "id" });
+      }
+      if (oldVersion < 2) {
+        d.createObjectStore("sram");
+        d.createObjectStore("states");
+      }
     },
   });
   return dbPromise;
@@ -61,4 +71,20 @@ export async function recordPlay(id: string): Promise<void> {
   const d = await db();
   const prev = await d.get("plays", id);
   await d.put("plays", { id, lastPlayedAt: Date.now(), plays: (prev?.plays ?? 0) + 1 });
+}
+
+export async function getSram(id: string): Promise<Uint8Array | undefined> {
+  return (await db()).get("sram", id);
+}
+
+export async function putSram(id: string, data: Uint8Array): Promise<void> {
+  await (await db()).put("sram", data, id);
+}
+
+export async function getSaveState(id: string) {
+  return (await db()).get("states", id);
+}
+
+export async function putSaveState(id: string, json: string): Promise<void> {
+  await (await db()).put("states", { json, savedAt: Date.now() }, id);
 }

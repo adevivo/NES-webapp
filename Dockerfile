@@ -5,7 +5,7 @@ COPY package.json package-lock.json ./
 COPY stubs ./stubs
 COPY scripts ./scripts
 RUN npm ci
-COPY tsconfig.json vite.config.ts index.html play.html activity.html ./
+COPY tsconfig.json vite.config.ts index.html play.html activity.html nes.html ./
 COPY src ./src
 COPY public ./public
 RUN npm run build

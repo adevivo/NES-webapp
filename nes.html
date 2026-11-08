@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#16161d" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <title>Play — 8-Bit Shelf</title>
+  </head>
+  <body class="nesplay">
+    <header class="topbar topbar-compact">
+      <a id="back" class="btn" href="./">← Back</a>
+      <h1 id="title" class="game-title">Pick a game</h1>
+      <div class="toolbar" id="toolbar" hidden>
+        <button class="btn" id="pause" type="button">Pause</button>
+        <button class="btn" id="reset" type="button">Reset</button>
+        <button class="btn" id="save" type="button" title="Quick save (F5)">Save</button>
+        <button class="btn" id="load" type="button" title="Quick load (F7)">Load</button>
+        <button class="btn" id="mute" type="button">Mute</button>
+        <button class="btn" id="full" type="button">Full</button>
+        <button class="btn" id="close" type="button">Games</button>
+      </div>
+    </header>
+
+    <div id="toast" class="toast toast-float" role="status" aria-live="polite" hidden></div>
+
+    <main id="pick" class="pick">
+      <p class="muted">
+        Your ROMs stay on this device — they're read in the browser and never uploaded. Unzipped <code>.nes</code> files only.
+      </p>
+      <label class="btn btn-primary">Add .nes ROM <input id="file" type="file" accept=".nes" multiple hidden /></label>
+      <div id="games" class="grid pick-grid"></div>
+    </main>
+
+    <main id="stage" class="stage" hidden>
+      <canvas id="screen" width="256" height="240" class="nes-screen" tabindex="0" aria-label="Game screen"></canvas>
+    </main>
+
+    <footer id="help" class="footer muted" hidden></footer>
+
+    <script type="module" src="/src/nes-page.ts"></script>
+  </body>
+</html>
